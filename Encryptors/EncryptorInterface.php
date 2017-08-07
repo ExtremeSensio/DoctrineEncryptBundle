@@ -4,7 +4,7 @@ namespace Ambta\DoctrineEncryptBundle\Encryptors;
 
 /**
  * Encryptor interface for encryptors
- * 
+ *
  * @author Victor Melnik <melnikvictorl@gmail.com>
  */
 interface EncryptorInterface {
@@ -19,7 +19,7 @@ interface EncryptorInterface {
      * @param string $data Plain text to encrypt
      * @return string Encrypted text
      */
-    public function encrypt($data);
+    public function encrypt($data, $sign = '<ENC>');
 
     /**
      * @param string $data Encrypted text

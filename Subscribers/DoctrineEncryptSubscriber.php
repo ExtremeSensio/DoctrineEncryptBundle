@@ -265,6 +265,9 @@ class DoctrineEncryptSubscriber implements EventSubscriber {
                             //Get the information (value) of the property
                             try {
                                 $getInformation = $entity->$getter();
+                                if ($getInformation instanceof \DateTime) {
+                                    $getInformation = $getInformation->format('Y-m-d H:i:s');
+                                }
                             } catch(\Exception $e) {
                                 $getInformation = null;
                             }
@@ -275,17 +278,29 @@ class DoctrineEncryptSubscriber implements EventSubscriber {
                              */
                             if($encryptorMethod == "decrypt") {
                                 if(!is_null($getInformation) and !empty($getInformation)) {
-                                    if(substr($getInformation, -5) == "<ENC>") {
+                                    if(substr($getInformation, -5) === '<ENC>' || substr($getInformation, -6) === '<ENCD>') {
                                         $this->decryptCounter++;
-                                        $currentPropValue = $this->encryptor->decrypt(substr($getInformation, 0, -5));
+                                        if (substr($getInformation, -5) === '<ENC>')
+                                            $currentPropValue = $this->encryptor->decrypt(substr($getInformation, 0, -5));
+                                        else
+                                        {
+                                            $date = $this->encryptor->decrypt(substr($getInformation, 0, -6));
+                                            $currentPropValue = \DateTime::createFromFormat('Y-m-d H:i:s' , $date);
+                                        }
                                         $entity->$setter($currentPropValue);
                                     }
                                 }
                             } else {
-                                if(!is_null($getInformation) and !empty($getInformation)) {
-                                    if(substr($entity->$getter(), -5) != "<ENC>") {
+                                if(!is_null($getInformation) and isset($getInformation)) {
+                                    $content = $entity->$getter();
+                                    $sign = '<ENC>';
+                                    if ($content instanceof \DateTime) {
+                                        $content = $content->format('Y-m-d H:i:s');
+                                        $sign = '<ENCD>';
+                                    }
+                                    if(substr($content, -5) != "<ENC>") {
                                         $this->encryptCounter++;
-                                        $currentPropValue = $this->encryptor->encrypt($entity->$getter());
+                                        $currentPropValue = $this->encryptor->encrypt($content, $sign);
                                         $entity->$setter($currentPropValue);
                                     }
                                 }

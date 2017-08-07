@@ -4,7 +4,7 @@ namespace Ambta\DoctrineEncryptBundle\Encryptors;
 
 /**
  * Class for variable encryption
- * 
+ *
  * @author Victor Melnik <melnikvictorl@gmail.com>
  */
 class VariableEncryptor implements EncryptorInterface {
@@ -33,7 +33,7 @@ class VariableEncryptor implements EncryptorInterface {
     /**
      * {@inheritdoc}
      */
-    public function encrypt($data) {
+    public function encrypt($data, $sign = '<ENC>') {
 
         if(is_string($data)) {
             return trim(base64_encode(mcrypt_encrypt(
@@ -42,7 +42,7 @@ class VariableEncryptor implements EncryptorInterface {
                 $data,
                 MCRYPT_MODE_ECB,
                 $this->initializationVector
-            ))) . "<ENC>";
+            ))) . $sign;
         }
 
         /*

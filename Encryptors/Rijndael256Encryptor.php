@@ -4,7 +4,7 @@ namespace Ambta\DoctrineEncryptBundle\Encryptors;
 
 /**
  * Class for variable encryption
- * 
+ *
  * @author Marcel van Nuil <marcel@ambta.com>
  */
 class Rijndael256Encryptor implements EncryptorInterface {
@@ -33,7 +33,7 @@ class Rijndael256Encryptor implements EncryptorInterface {
     /**
      * {@inheritdoc}
      */
-    public function encrypt($data) {
+    public function encrypt($data, $sign = '<ENC>') {
 
         if(is_string($data)) {
             return trim(base64_encode(mcrypt_encrypt(
@@ -42,7 +42,7 @@ class Rijndael256Encryptor implements EncryptorInterface {
                 $data,
                 MCRYPT_MODE_ECB,
                 $this->initializationVector
-            ))). "<ENC>";
+            ))). $sign;
         }
 
         return $data;
@@ -57,6 +57,7 @@ class Rijndael256Encryptor implements EncryptorInterface {
         if(is_string($data)) {
 
             $data = str_replace("<ENC>", "", $data);
+            $data = str_replace("<ENCD>", "", $data);
 
             return trim(mcrypt_decrypt(
                 MCRYPT_RIJNDAEL_256,

@@ -4,7 +4,7 @@ namespace Ambta\DoctrineEncryptBundle\Encryptors;
 
 /**
  * Class for AES256 encryption
- * 
+ *
  * @author Victor Melnik <melnikvictorl@gmail.com>
  */
 class AES256Encryptor implements EncryptorInterface {
@@ -33,7 +33,7 @@ class AES256Encryptor implements EncryptorInterface {
     /**
      * {@inheritdoc}
      */
-    public function encrypt($data) {
+    public function encrypt($data, $sign = '<ENC>') {
         return trim(base64_encode(mcrypt_encrypt(
             MCRYPT_RIJNDAEL_256,
             $this->secretKey,
